@@ -1,0 +1,86 @@
+python
+from qiskit_aer import AerSimulator
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter
+import numpy as np
+
+def omni_one_kernel_variational(n_qubits=5, phase_negfib=5, delta=0.5, layers=1, measure_all=False):
+    qr = QuantumRegister(n_qubits, 'q')
+    cr = ClassicalRegister(n_qubits, 'c') if measure_all else None
+    circuit = QuantumCircuit(qr, cr) if measure_all else QuantumCircuit(qr)
+    
+    theta = Parameter('θ')
+    phi = Parameter('φ')
+    parameters = [theta, phi]
+    
+    circuit.h(range(n_qubits))
+    circuit.rz(theta * phase_negfib * np.pi, 0)
+    for i in range(n_qubits - 1):
+        circuit.cx(i, i + 1)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.crz(phi * np.cos(delta * phase_negfib), 2, 3)
+    circuit.h(4)
+    circuit.cswap(4, 2, 3)
+    
+    for layer in range(layers):
+        layer_theta = Parameter(f'θ_{layer}')
+        layer_phi = Parameter(f'φ_{layer}')
+        parameters.extend([layer_theta, layer_phi])
+        circuit.ry(layer_theta, range(n_qubits))
+        circuit.rz(layer_phi, range(n_qubits))
+        for i in range(n_qubits - 1):
+            circuit.cx(i, i + 1)
+    
+    if measure_all:
+        circuit.measure(qr, cr)
+    
+    return circuit, parameters
+
+def get_backend(backend_type='statevector', noisy=False):
+    backend = AerSimulator(method='statevector' if backend_type == 'statevector' else 'density_matrix')
+    noise_model = None
+    if noisy:
+        from qiskit_aer.noise import NoiseModel, depolarizing_error
+        noise_model = NoiseModel()
+        noise_model.add_all_qubit_quantum_error(depolarizing_error(0.01, 1), ['h', 'cx', 'rz', 'ry', 'crz', 'cswap'])
+    return backend, noise_model
+
+def cost_function(params, circuit, parameters, target_operator, backend_type='statevector', shots=1024):
+    param_dict = {p: v for p, v in zip(parameters, params)}
+    bound_circuit = circuit.assign_parameters(param_dict)
+    backend, noise_model = get_backend(backend_type, noisy=False)
+    result = backend.run(bound_circuit, shots=shots, noise_model=noise_model).result()
+    counts = result.get_counts() if backend_type != 'statevector' else None
+    
+    if backend_type == 'statevector':
+        statevector = result.get_statevector()
+        expectation = np.real(np.dot(statevector.conj(), np.dot(target_operator.data, statevector)))
+    else:
+        expectation = 0
+        for state, count in counts.items():
+            state_vec = np.zeros(2**bound_circuit.num_qubits)
+            state_vec[int(state, 2)] = 1
+            expectation += count * np.real(np.dot(state_vec.T, np.dot(target_operator.data, state_vec)))
+        expectation /= shots
+    return expectation
+
+def simulate_circuit(circuit, backend_type='statevector', noisy=False, shots=1024, callback=None):
+    backend, noise_model = get_backend(backend_type, noisy)
+    try:
+        result = backend.run(circuit, shots=shots, noise_model=noise_model).result()
+        if callback:
+            callback(result)
+        if backend_type == 'statevector':
+            statevector = result.get_statevector()
+            prob_sum = np.sum(np.abs(statevector)**2)
+            return {
+                'statevector': statevector,
+                'amplitudes': np.abs(statevector)[:10],
+                'prob_sum': prob_sum
+            }
+        else:
+            counts = result.get_counts()
+            return {'counts': counts}
+    except Exception as err:
+        return {'error': str(err)}
