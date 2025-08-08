@@ -1,0 +1,18 @@
+json
+{
+  "Fibonacci": {
+    "description": "Sequence of recursive growth (1, 1, 2, 3, 5, ...), encoding light’s memory",
+    "references": ["ch1_Light/phase_fibonacci.md", "equations/fib_spiral.tex"],
+    "code_ref": "omni_kernel.py:circuit.rz"
+  },
+  "Zodiac": {
+    "description": "Celestial lattice of 12 archetypes, mapping to quantum angles",
+    "references": ["ch5_Astrology/zodiac_parameters.md"],
+    "symbolic": "Wheel of cosmic becoming"
+  },
+  "Memory": {
+    "description": "Gravity’s imprint on the quantum lattice, sung by light and stars",
+    "references": ["ch5_Astrology/transit_modulation.md"],
+    "symbolic": "Sacred ledger of the universe"
+  }
+}
