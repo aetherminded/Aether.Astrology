@@ -1,0 +1,15 @@
+json
+{
+  "Aries": {"element": "fire", "mode": "cardinal", "theta": 0.2618, "phi": 1.0472},
+  "Taurus": {"element": "earth", "mode": "fixed", "theta": 0.5236, "phi": 2.0944},
+  "Gemini": {"element": "air", "mode": "mutable", "theta": 0.7854, "phi": 3.1416},
+  "Cancer": {"element": "water", "mode": "cardinal", "theta": 1.0472, "phi": 1.0472},
+  "Leo": {"element": "fire", "mode": "fixed", "theta": 0.2618, "phi": 2.0944},
+  "Virgo": {"element": "earth", "mode": "mutable", "theta": 0.5236, "phi": 3.1416},
+  "Libra": {"element": "air", "mode": "cardinal", "theta": 0.7854, "phi": 1.0472},
+  "Scorpio": {"element": "water", "mode": "fixed", "theta": 1.0472, "phi": 2.0944},
+  "Sagittarius": {"element": "fire", "mode": "mutable", "theta": 0.2618, "phi": 3.1416},
+  "Capricorn": {"element": "earth", "mode": "cardinal", "theta": 0.5236, "phi": 1.0472},
+  "Aquarius": {"element": "air", "mode": "fixed", "theta": 0.7854, "phi": 2.0944},
+  "Pisces": {"element": "water", "mode": "mutable", "theta": 1.0472, "phi": 3.1416}
+  }
