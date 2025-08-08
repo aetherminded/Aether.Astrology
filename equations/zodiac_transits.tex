@@ -1,0 +1,28 @@
+latex
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+
+\section{Zodiacal Transit Modulation}
+
+The strength of a planetary transit in a zodiac sign is given by:
+
+\[
+\text{Strength}_{\text{planet, sign}} = w_{\text{planet}} \cdot \cos(\alpha_{\text{sign}})
+\]
+
+where:
+\begin{itemize}
+    \item \(w_{\text{planet}}\): Weight of the planet (e.g., Mars = 0.8, Jupiter = 0.6).
+    \item \(\alpha_{\text{sign}}\): Angular position of the sign in the zodiac (e.g., Scorpio = 210^\circ--240^\circ).
+\end{itemize}
+
+This modulates the Fibonacci phase in the quantum circuit:
+
+\[
+\phi_{\text{eff}} = \theta \cdot F_n \cdot \pi + \text{Strength}_{\text{planet, sign}}
+\]
+
+where \(F_n\) is the \(n\)-th Fibonacci number (e.g., \(F_5 = 5\)).
+
+\end{document}
